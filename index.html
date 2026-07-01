@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бесполезные сайты - Случайный генератор</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #ff6b6b;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', cursive, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.5s ease;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      color: white;
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50px;
+      padding: 50px 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                  0 0 100px rgba(255, 255, 255, 0.2);
+      animation: wobble 2s ease-in-out infinite;
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      75% { transform: rotate(-2deg); }
+    }
+
+    .emoji-big {
+      font-size: 120px;
+      margin-bottom: 20px;
+      animation: bounce 1s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
+      animation: rainbow 3s linear infinite;
+    }
+
+    @keyframes rainbow {
+      0% { color: #ff6b6b; }
+      20% { color: #ffd93d; }
+      40% { color: #6bcb77; }
+      60% { color: #4d96ff; }
+      80% { color: #9b59b6; }
+      100% { color: #ff6b6b; }
+    }
+
+    .subtitle {
+      font-size: 1.3em;
+      margin-bottom: 30px;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 25px 50px;
+      font-size: 2em;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+      background-size: 400% 400%;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .button:hover {
+      transform: scale(1.1) rotate(-5deg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .button:active {
+      transform: scale(0.95);
+    }
+
+    .counter {
+      margin-top: 30px;
+      font-size: 1.5em;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px 30px;
+      border-radius: 50px;
+      display: inline-block;
+    }
+
+    .site-preview {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      font-size: 1.1em;
+    }
+
+    .confetti {
+      position: fixed;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 100;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 30px;
+      animation: sparkleAnim 1s ease-out forwards;
+      z-index: 100;
+    }
+
+    @keyframes sparkleAnim {
+      0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(2) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.8em;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="emoji-big" id="mainEmoji">🤪</div>
+      <h1>БЕСПОЛЕЗНЫЕ САЙТЫ</h1>
+      <p class="subtitle">Теряйте время с удовольствием!</p>
+      
+      <div class="site-preview" id="sitePreview" style="display: none;">
+        <div id="siteName" style="font-weight: bold; margin-bottom: 5px;"></div>
+        <div id="siteDesc" style="font-size: 0.9em; opacity: 0.8;"></div>
+      </div>
+      
+      <button class="button" id="uselessBtn">
+        🎲 ПОГНАЛИ!
+      </button>
+      
+      <div class="counter">
+        <span id="clickCount">0</span> сайтов открыто
+      </div>
+    </div>
+    
+    <div class="footer">
+      Вдохновлено <a href="https://theuselessweb.com" style="color: white;">The Useless Web</a>
+    </div>
+  </div>
+
+  <script>
+    // База бесполезных, странных и забавных сайтов
+    const USELESS_SITES = [
+      { url: "https://theuselessweb.com", name: "The Useless Web", desc: "Оригинальный сайт с бесполезными сайтами" },
+      { url: "https://pointerpointer.com", name: "Pointer Pointer", desc: "Указатель всегда показывает на ваш курсор" },
+      { url: "https://cat-bounce.com", name: "Cat Bounce", desc: "Прыгающие котики!" },
+      { url: "https://eelslap.com", name: "Eel Slap", desc: "Шлёпните кого-нибудь угрём" },
+      { url: "https://hackertyper.com", name: "Hacker Typer", desc: "Почувствуйте себя хакером из фильмов" },
+      { url: "https://zombo.com", name: "Zombo.com", desc: "Вы можете сделать всё на Zombo.com" },
+      { url: "https://isitchristmas.com", name: "Is It Christmas?", desc: "Узнайте, Рождество ли сегодня" },
+      { url: "https://hasthelargehadroncolliderdestroyedtheworldyet.com", name: "Has the LHC Destroyed the World?", desc: "Уничтожил ли большой адронный коллайдер мир?" },
+      { url: "https://cant-not-tweet-this.com", name: "Can't Not Tweet This", desc: "Случайные странные твиты" },
+      { url: "https://mondrianandme.com", name: "Mondrian and Me", desc: "Создайте свой шедевр в стиле Мондриана" },
+      { url: "https://stellarium-web.org", name: "Stellarium", desc: "Смотрите на звёзды онлайн" },
+      { url: "https://quickdraw.withgoogle.com", name: "Quick, Draw!", desc: "Нейросеть угадывает ваши рисунки" },
+      { url: "https://thezen.zone", name: "The Zen Zone", desc: "Расслабляющие звуки и анимации" },
+      { url: "https://thisissand.com", name: "This Is Sand", desc: "Рисуйте песком" },
+      { url: "https://weavesilk.com", name: "Weave Silk", desc: "Создавайте красивые светящиеся узоры" },
+      { url: "https://mrdoob.com/projects/chromeexperiments/google-gravity", name: "Google Gravity", desc: "Гравитация на Google" },
+      { url: "https://burymewithmymoney.com", name: "Bury Me With My Money", desc: "Просто странная игра" },
+      { url: "https://checkboxrace.com", name: "Checkbox Race", desc: "Гонка на чекбоксах" },
+      { url: "https://alwaysjudgeabookbyitscover.com", name: "Always Judge a Book", desc: "Судите книги по обложкам" },
+      { url: "https://cursoreffects.com", name: "Cursor Effects", desc: "Эффекты для курсора" },
+      { url: "https://drawing.garden", name: "Drawing Garden", desc: "Рисуйте в саду" },
+      { url: "https://findtheinvisiblecow.com", name: "Find the Invisible Cow", desc: "Найдите невидимую корову" },
+      { url: "https://papertoilet.com", name: "Paper Toilet", desc: "Виртуальная туалетная бумага" },
+      { url: "https://puginarug.com", name: "Pug in a Rug", desc: "Мопс в ковре" },
+      { url: "https://smashthewalls.com", name: "Smash the Walls", desc: "Крушите стены!" },
+      { url: "https://thatsthefinger.com", name: "That's the Finger", desc: "Просто палец" },
+      { url: "https://corndog.io", name: "Corndog.io", desc: "Корн-доги!" },
+      { url: "https://heeeeeeeey.com", name: "Heeeeeeeey", desc: "Эээээй!" },
+      { url: "https://hooooooooo.com", name: "Hooooooooo", desc: "Уууууу!" },
+      { url: "https://ilovechicken.com", name: "I Love Chicken", desc: "Я люблю курицу" },
+      { url: "https://incredibox.com", name: "Incredibox", desc: "Создавайте музыку" },
+      { url: "https://mondrianpwnd.com", name: "Mondrian Pwnd", desc: "Мондриан опять" },
+      { url: "https://ncase.me/trust", name: "The Evolution of Trust", desc: "Игра про доверие" },
+      { url: "https://www.omfgdogs.com", name: "OMG Dogs", desc: "ОМГ СОБАКИ!" },
+      { url: "https://optical.toys", name: "Optical Toys", desc: "Оптические иллюзии" },
+      { url: "https://particle-love.com", name: "Particle Love", desc: "Интерактивные частицы" },
+      { url: "https://patatap.com", name: "Patatap", desc: "Музыкальная клавиатура" },
+      { url: "https://pixelsfighting.com", name: "Pixels Fighting", desc: "Пиксели дерутся" },
+      { url: "https://www.pointerpointer.com", name: "Pointer Pointer", desc: "Фото с указателем на ваш курсор" },
+      { url: "https://printergoesskrrr.com", name: "Printer Goes Skrrr", desc: "Принтер делает скррр" },
+      { url: "https://randomcolour.com", name: "Random Colour", desc: "Случайный цвет" },
+      { url: "https://rms.sexy", name: "RMS Sexy", desc: "Ричард Столлман..." },
+      { url: "https://www.roomscapestudios.com", name: "Roomscape", desc: "Виртуальные комнаты" },
+      { url: "https://sanger.dk", name: "Sanger.dk", desc: "Странный датский сайт" },
+      { url: "https://slither.io", name: "Slither.io", desc: "Игра про змеек" },
+      { url: "https://agar.io", name: "Agar.io", desc: "Поедание клеток" },
+      { url: "https://snowflakes.barkleyus.com", name: "Snowflakes", desc: "Создавайте снежинки" },
+      { url: "https://stars.chromeexperiments.com", name: "100,000 Stars", desc: "Исследуйте галактику" },
+      { url: "https://www.staggeringbeauty.com", name: "Staggering Beauty", desc: "Трясущийся червяк" },
+      { url: "https://strobe.cool", name: "Strobe Cool", desc: "Стробоскопические эффекты" },
+      { url: "https://thecodingtrain.com", name: "The Coding Train", desc: "Весёлое программирование" },
+      { url: "https://tinytuba.com", name: "Tiny Tuba", desc: "Маленькая туба" },
+      { url: "https://toilet-guru.com", name: "Toilet Guru", desc: "Всё о туалетах" },
+      { url: "https://trumpdonald.org", name: "Trump Donald", desc: "Рисуйте Трампом" },
+      { url: "https://trypap.com", name: "Try Pap", desc: "Попробуйте пап" },
+      { url: "https://www.tryjusttry.com", name: "Try Just Try", desc: "Просто попробуйте" },
+      { url: "https://unicodesnowmanforyou.com", name: "Unicode Snowman", desc: "Снеговик из юникода" },
+      { url: "https://waitbutwhy.com", name: "Wait But Why", desc: "Длинные интересные статьи" },
+      { url: "https://weirdorconfusing.com", name: "Weird or Confusing?", desc: "Странные товары с Amazon" },
+      { url: "https://www.window-swap.com", name: "Window Swap", desc: "Смотрите в окна по всему миру" },
+      { url: "https://winterbash2016.com", name: "Winter Bash", desc: "Зимние игры" },
+      { url: "https://www.zerohedge.com", name: "Zero Hedge", desc: "Финансовые новости" },
+      { url: "https://zoomquilt.org", name: "Zoom Quilt", desc: "Бесконечное приближение" },
+      { url: "https://www.omglasergunspewpewpew.com", name: "OMG Laser Guns", desc: "Лазерные пушки!" },
+      { url: "https://endless.horse", name: "Endless Horse", desc: "Бесконечная лошадь" },
+      { url: "https://www.catipsum.com", name: "Cat Ipsum", desc: "Lorem Ipsum с котиками" },
+      { url: "https://www.lingscars.com", name: "Ling's Cars", desc: "Самый безумный сайт аренды авто" },
+      { url: "https://dogs.are.the.most.moe", name: "Dogs Are The Most Moe", desc: "Собаки - самые моэ" },
+      { url: "https://www.clicktoremove.com", name: "Click to Remove", desc: "Кликайте чтобы удалить" },
+      { url: "https://www.koalastothemax.com", name: "Koalas to the Max", desc: "Коалы на максимум" },
+      { url: "https://www.omg-soup.com", name: "OMG Soup", desc: "ОМГ Суп!" },
+      { url: "https://www.catswhocode.com", name: "Cats Who Code", desc: "Котики, которые кодируют" },
+      { url: "https://www.republiquedesmangues.fr", name: "République des Mangues", desc: "Республика манго" },
+      { url: "https://www.nyan.cat", name: "Nyan Cat", desc: "Легендарный Нян Кэт" },
+      { url: "https://www.cornify.com", name: "Cornify", desc: "Добавьте единорогов на любой сайт" },
+      { url: "https://www.georgeorwell.org", name: "George Orwell", desc: "1984" },
+      { url: "https://www.theonion.com", name: "The Onion", desc: "Сатирические новости" },
+      { url: "https://www.clickhole.com", name: "ClickHole", desc: "Пародия на кликбейт" }
+    ];
+
+    let clickCount = 0;
+    let lastOpenedSite = null;
+
+    // Получить случайный сайт (не такой же как предыдущий)
+    function getRandomSite() {
+      let site;
+      do {
+        site = USELESS_SITES[Math.floor(Math.random() * USELESS_SITES.length)];
+      } while (site === lastOpenedSite && USELESS_SITES.length > 1);
+      
+      lastOpenedSite = site;
+      return site;
+    }
+
+    // Создать конфетти
+    function createConfetti(x, y) {
+      const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff8e53', '#9b59b6', '#ff69b4', '#00d2ff'];
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = x + 'px';
+        confetti.style.top = y + 'px';
+        confetti.style.width = Math.random() * 10 + 5 + 'px';
+        confetti.style.height = Math.random() * 10 + 5 + 'px';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+        confetti.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    // Создать искры
+    function createSparkles(x, y) {
+      const emojis = ['✨', '⭐', '💫', '🌟', '🎉', '🎊', '💥', '🔥', '🌈', '💖'];
+      
+      for (let i = 0; i < 10; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        sparkle.style.left = (x + Math.random() * 100 - 50) + 'px';
+        sparkle.style.top = (y + Math.random() * 100 - 50) + 'px';
+        
+        document.body.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 1000);
+      }
+    }
+
+    // Сменить фоновый цвет
+    function changeBackground() {
+      const colors = [
+        '#ff6b6b', '#ff8e53', '#ffd93d', '#6bcb77', 
+        '#4d96ff', '#9b59b6', '#ff69b4', '#00d2ff',
+        '#ff6348', '#a29bfe', '#fd79a8', '#00b894',
+        '#e17055', '#6c5ce7', '#fdcb6e', '#e84393'
+      ];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      document.body.style.background = randomColor;
+    }
+
+    // Сменить эмодзи
+    function changeEmoji() {
+      const emojis = ['🤪', '😜', '🤩', '🥳', '😎', '🤯', '🦄', '🌈', '💩', '👾', 
+                      '🎃', '🤖', '👽', '🐙', '🦀', '🐸', '🦄', '🍕', '🌮', '🎪'];
+      document.getElementById('mainEmoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    }
+
+    // Открыть случайный бесполезный сайт
+    function openUselessSite(e) {
+      const site = getRandomSite();
+      
+      // Обновить превью
+      document.getElementById('sitePreview').style.display = 'block';
+      document.getElementById('siteName').textContent = '🎯 ' + site.name;
+      document.getElementById('siteDesc').textContent = site.desc;
+      
+      // Увеличить счётчик
+      clickCount++;
+      document.getElementById('clickCount').textContent = clickCount;
+      
+      // Анимации
+      changeBackground();
+      changeEmoji();
+      
+      // Конфетти и искры
+      const x = e ? e.clientX : window.innerWidth / 2;
+      const y = e ? e.clientY : window.innerHeight / 2;
+      createConfetti(x, y);
+      createSparkles(x, y);
+      
+      // Вибрация на мобильных устройствах
+      if (navigator.vibrate) {
+        navigator.vibrate(200);
+      }
+      
+      // Открыть сайт
+      setTimeout(() => {
+        window.open(site.url, '_blank', 'noopener,noreferrer');
+      }, 500);
+    }
+
+    // Обработчик клика по всей странице
+    document.body.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+        openUselessSite(e);
+      }
+    });
+
+    // Обработчик кнопки
+    document.getElementById('uselessBtn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      openUselessSite(e);
+    });
+
+    // Обработка клавиатуры
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openUselessSite(e);
+      }
+    });
+
+    // Плавающие эмодзи на фоне
+    function createFloatingEmoji() {
+      const emojis = ['🤪', '🎉', '🌟', '💩', '🦄', '🌈', '🎲', '✨', '🔥', '💎'];
+      const emoji = document.createElement('div');
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.cssText = `
+        position: fixed;
+        font-size: ${Math.random() * 30 + 20}px;
+        left: ${Math.random() * 100}%;
+        top: -50px;
+        animation: fall ${Math.random() * 3 + 3}s linear forwards;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.3;
+      `;
+      document.body.appendChild(emoji);
+      
+      setTimeout(() => emoji.remove(), 6000);
+    }
+
+    // Запускаем плавающие эмодзи
+    setInterval(createFloatingEmoji, 2000);
+
+    // Инициализация
+    window.addEventListener('load', () => {
+      // Показываем случайный сайт при загрузке
+      const site = USELESS_SITES[Math.floor(Math.random() * USELESS_SITES.length)];
+      document.getElementById('sitePreview').style.display = 'block';
+      document.getElementById('siteName').textContent = '🎯 ' + site.name;
+      document.getElementById('siteDesc').textContent = site.desc;
+    });
+
+    console.log('🎉 Добро пожаловать в мир бесполезных сайтов!');
+    console.log('Кликайте куда угодно или нажмите Enter для открытия случайного сайта');
+    console.log('В базе: ' + USELESS_SITES.length + ' сайтов');
+  </script>
+</body>
+</html>
